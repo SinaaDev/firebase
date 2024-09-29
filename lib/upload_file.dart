@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fire/models/post_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class UploadFile extends StatefulWidget {
   const UploadFile({super.key});
@@ -14,6 +17,9 @@ class UploadFile extends StatefulWidget {
 class _UploadFileState extends State<UploadFile> {
   File? imageFile;
   UploadTask? uploadTask;
+  String imageUrl = '';
+
+  final bodyTextController = TextEditingController();
 
   Future _getFromCamera()async{
     XFile? result = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -37,9 +43,36 @@ class _UploadFileState extends State<UploadFile> {
     final ref = FirebaseStorage.instance.ref().child(path);
 
     setState(() {
+      imageUrl = imageFileName;
       uploadTask = ref.putFile(imageFile!);
     });
 
+  }
+
+  Future createPost()async{
+    print('------------------- BODY STRING TEXT: ${bodyTextController.text} ------------------------');
+    print('------------------- IMAGE URL: ${imageUrl} ------------------------');
+    if(bodyTextController.text.isEmpty || bodyTextController.text.length > 80) return;
+    // if(imageUrl == '') return;
+
+    String postId = getId();
+   final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+    
+    final post = Post(
+        id: postId,
+        createdAt: Timestamp.now(),
+        imageUrl: imageUrl,
+        content: bodyTextController.text,
+    );
+    final postJson = post.toJson();
+
+    postRef.set(postJson);
+  }
+
+  String getId(){
+    DateTime now = DateTime.now();
+    String timeStamp = DateFormat('yyyyMMddHHmmss').format(now);
+    return timeStamp;
   }
 
   Widget buildProgress()=>StreamBuilder(
@@ -60,6 +93,7 @@ class _UploadFileState extends State<UploadFile> {
         }
       },
   );
+
 
 
 
@@ -93,8 +127,22 @@ class _UploadFileState extends State<UploadFile> {
               Image.file(File(imageFile!.path),fit: BoxFit.cover,),
             ),
             SizedBox(height: 20,),
-            ElevatedButton(onPressed: (){
-              uploadFile();
+
+            Padding(
+              padding: const EdgeInsets.all(40),
+              child: TextFormField(
+                controller: bodyTextController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Write Something here....'
+                ),
+              ),
+            ),
+
+            ElevatedButton(
+                onPressed: (){
+              createPost();
             }, child: Text('Uplaod Image')),
 
             SizedBox(height: 30,),
