@@ -13,10 +13,19 @@ class Post {
     required this.content,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'id': id,
         'createdAt': createdAt,
         'imageUrl': imageUrl,
         'content': content
       };
+
+  static Post fromJson(Map<String, dynamic> json) =>
+      Post(
+          id: json['id'],
+          createdAt: json['createdAt'],
+          imageUrl: json['imageUrl'],
+          content: json['content'],
+      );
 }

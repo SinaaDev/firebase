@@ -43,8 +43,17 @@ class _UploadFileState extends State<UploadFile> {
     final ref = FirebaseStorage.instance.ref().child(path);
 
     setState(() {
-      imageUrl = imageFileName;
       uploadTask = ref.putFile(imageFile!);
+    });
+
+    // Wait for the upload to complete
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    // Get the download URL of the uploaded file
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+
+    setState(() {
+      imageUrl = downloadUrl;
     });
 
   }
@@ -66,7 +75,9 @@ class _UploadFileState extends State<UploadFile> {
     );
     final postJson = post.toJson();
 
-    postRef.set(postJson);
+    postRef.set(postJson).whenComplete(() {
+      Navigator.pop(context);
+    },);
   }
 
   String getId(){
@@ -141,7 +152,8 @@ class _UploadFileState extends State<UploadFile> {
             ),
 
             ElevatedButton(
-                onPressed: (){
+                onPressed: ()async{
+                  await uploadFile();
               createPost();
             }, child: Text('Uplaod Image')),
 
