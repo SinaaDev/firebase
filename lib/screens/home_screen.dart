@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:fire/upload_file.dart';
 import 'package:flutter/material.dart';
-
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/post_model.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -18,6 +20,21 @@ class HomeScreen extends StatelessWidget {
             )
             .toList(),
       );
+
+  Future downloadImage(String url)async{
+    final tempDir = await getTemporaryDirectory();
+    final fileName = url.split('files%').last.split('?').first;
+    final path = '${tempDir.path}/$fileName';
+
+    await Dio().download(url, path);
+
+    if(url.contains('.mp4')){
+      await GallerySaver.saveVideo(path,toDcim: true);
+    }else if(url.contains('.jpg')){
+      await GallerySaver.saveImage(path,toDcim: true);
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +55,23 @@ class HomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(12),
                   margin: EdgeInsets.all(12),
                   child: Column(children: [
-                    Image.network(
-                      posts[i].imageUrl
-                    ),
-                    SizedBox(height: 24,),
-                    Text(posts[i].content,style: TextStyle(fontSize: 32),),
-
-                  ],),
+                      Stack(
+                        children: [
+                          Image.network(
+                              posts[i].imageUrl
+                          ),
+                          Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                  color: Colors.amber,
+                                  child: IconButton(onPressed: (){
+                                    downloadImage(posts[i].imageUrl);                                  },icon: Icon(Icons.download,size: 32,),),)),
+                          ]
+                      ),
+                      SizedBox(height: 24,),
+                      Text(posts[i].content,style: TextStyle(fontSize: 32),),
+                    ],
+                  ),
                 ),
             );
           }else{
