@@ -25,6 +25,17 @@ class _UploadFileState extends State<UploadFile> {
   final bodyTextController = TextEditingController();
 
 
+  Future deletePost()async{
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.post!.id)
+        .delete()
+        .whenComplete(() {
+           Navigator.pop(context);
+        },);
+  }
+
+
   Future _getFromCamera()async{
     XFile? result = await ImagePicker().pickImage(source: ImageSource.camera);
 
@@ -171,12 +182,34 @@ class _UploadFileState extends State<UploadFile> {
               ),
             ),
 
-            ElevatedButton(
-                onPressed: ()async{
-                  if(!widget.isEditMode)
-                  await uploadFile();
-                  createPost();
-            }, child: widget.isEditMode? Text('Update') : Text('Post')),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0,vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                      onPressed: ()async{
+                        if(!widget.isEditMode)
+                        await uploadFile();
+                        createPost();
+                  }, child: widget.isEditMode? Text('Update') : Text('Post')),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                      onPressed: (){
+                      deletePost();
+                  }, child: Text('Delete')),
+                ],
+              ),
+            ),
 
             SizedBox(height: 30,),
 
