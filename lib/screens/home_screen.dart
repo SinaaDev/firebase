@@ -30,10 +30,9 @@ class HomeScreen extends StatelessWidget {
 
     if(url.contains('.mp4')){
       await GallerySaver.saveVideo(path,toDcim: true);
-    }else if(url.contains('.jpg')){
-      await GallerySaver.saveImage(path,toDcim: true);
+    }else if(url.contains('.jpg')) {
+      await GallerySaver.saveImage(path, toDcim: true);
     }
-
   }
 
   @override
@@ -50,27 +49,35 @@ class HomeScreen extends StatelessWidget {
             return ListView.separated(
                 itemCount: posts.length,
                 separatorBuilder: (context, index) => SizedBox(height: 24,),
-                itemBuilder: (context, i) => Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(12),
-                  margin: EdgeInsets.all(12),
-                  child: Column(children: [
-                      Stack(
-                        children: [
-                          Image.network(
-                              posts[i].imageUrl
-                          ),
-                          Align(
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                  color: Colors.amber,
-                                  child: IconButton(onPressed: (){
-                                    downloadImage(posts[i].imageUrl);                                  },icon: Icon(Icons.download,size: 32,),),)),
-                          ]
-                      ),
-                      SizedBox(height: 24,),
-                      Text(posts[i].content,style: TextStyle(fontSize: 32),),
-                    ],
+                itemBuilder: (context, i) => InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UploadFile(
+                      isEditMode: true,
+                      post: posts[i],
+                    ),));
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.all(12),
+                    margin: EdgeInsets.all(12),
+                    child: Column(children: [
+                        Stack(
+                          children: [
+                            Image.network(
+                                posts[i].imageUrl
+                            ),
+                            Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                    color: Colors.amber,
+                                    child: IconButton(onPressed: (){
+                                      downloadImage(posts[i].imageUrl);                                  },icon: Icon(Icons.download,size: 32,),),)),
+                            ]
+                        ),
+                        SizedBox(height: 24,),
+                        Text(posts[i].content,style: TextStyle(fontSize: 32),),
+                      ],
+                    ),
                   ),
                 ),
             );
@@ -85,7 +92,7 @@ class HomeScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UploadFile(),
+              builder: (context) => UploadFile(isEditMode: false,),
             ),
           );
         },
