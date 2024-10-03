@@ -88,26 +88,33 @@ class _SignInScreenState extends State<SignInScreen> {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
-    print('----------------------------------------------------------------');
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(child: CircularProgressIndicator()),
+      // barrierDismissible: false,
+      builder: (context) => Container(
+        color: Color(0xFFF0FDF4).withOpacity(0.3).withOpacity(0.2),
+        child: Center(
+          child: SizedBox(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(
+              color: Colors.blue,
+              backgroundColor: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
-    print('----------------------------------------------------------------');
 
-    try {
-    print('----------------------------------------------------------------');
-   await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email.text.trim(), password: password.text.trim());
-      // print(response.user!.email);
-    print('----------------------------------------------------------------');
-    } on FirebaseAuthException catch (e) {
-      print(e.toString());
-    }
+     try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+           email: email.text.trim(), password: password.text.trim());
+     } on FirebaseAuthException catch (e) {
+       print(e.toString());
+     }
 
-    navigatorKey.currentState!.popUntil(
-      (route) => route.isFirst,
-    );
+     navigatorKey.currentState!.popUntil(
+       (route) => route.isFirst,
+     );
   }
 }
