@@ -1,5 +1,7 @@
+import 'package:fire/screens/auth_screen.dart';
 import 'package:fire/screens/home_screen.dart';
 import 'package:fire/screens/signin_screen.dart';
+import 'package:fire/screens/verify_email_screen.dart';
 import 'package:fire/upload_file.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,9 +38,9 @@ class MyApp extends StatelessWidget {
                 child: Text('Something went wrong'),
               );
             } else if (snapshot.hasData) {
-              return HomeScreen();
+              return VerifyEmailScreen();
             } else {
-              return SignInScreen();
+              return AuthScreen();
             }
           }),
     );

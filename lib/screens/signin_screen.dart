@@ -1,11 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:fire/main.dart';
+import 'package:fire/screens/forgot_password_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  final Function() onClickedSignUp;
+  const SignInScreen({super.key, required this.onClickedSignUp});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -76,6 +79,23 @@ class _SignInScreenState extends State<SignInScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
+                  ),
+                  Gap(24),
+                  
+                  Align(
+                      child: TextButton(onPressed: (){navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => ForgotPasswordScreen(),));}, child: Text('Forgot Password'),style: TextButton.styleFrom(foregroundColor: Colors.blue),)),
+                  Align(
+                    child: RichText(text: TextSpan(
+                      text: 'No account?  ',
+                      style: TextStyle(color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: 'sign up',
+                          style: TextStyle(decoration: TextDecoration.underline,color: Colors.blue),
+                          recognizer: TapGestureRecognizer()..onTap = widget.onClickedSignUp
+                        )
+                      ]
+                    )),
                   )
                 ],
               ),
@@ -90,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     showDialog(
       context: context,
-      // barrierDismissible: false,
+      barrierDismissible: false,
       builder: (context) => Container(
         color: Color(0xFFF0FDF4).withOpacity(0.3).withOpacity(0.2),
         child: Center(
@@ -111,6 +131,8 @@ class _SignInScreenState extends State<SignInScreen> {
            email: email.text.trim(), password: password.text.trim());
      } on FirebaseAuthException catch (e) {
        print(e.toString());
+       final snackBar = SnackBar(content: Text(e.message!));
+       ScaffoldMessenger.of(context).showSnackBar(snackBar);
      }
 
      navigatorKey.currentState!.popUntil(
