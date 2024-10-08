@@ -23,6 +23,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   void initState() {
     super.initState();
     isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    print('=======YOUR EMAIL VERIFIED? $isEmailVerified================');
 
     if (!isEmailVerified) {
       sendEmailVerification();
@@ -65,7 +66,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => !isEmailVerified
+  Widget build(BuildContext context) => isEmailVerified
       ? HomeScreen()
       : Scaffold(
           body: Padding(

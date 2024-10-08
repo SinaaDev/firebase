@@ -47,6 +47,7 @@ dependencies:
   gap: ^3.0.1
   firebase_auth: ^5.3.1
   email_validator: ^3.0.0
+  google_sign_in: ^6.2.1
 #  file_picker: ^8.1.2
 
 dev_dependencies:
