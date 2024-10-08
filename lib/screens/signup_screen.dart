@@ -16,6 +16,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  final name = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -24,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    name.dispose();
     email.dispose();
     password.dispose();
   }
@@ -40,16 +42,35 @@ class _SignupScreenState extends State<SignupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+
+                // flutter logo
                 Flexible(
                   child: FlutterLogo(
                     size: 120,
                   ),
                 ),
                 Gap(24),
+
+                // name input
+                TextFormField(
+                  controller: name,
+                  decoration: InputDecoration(
+                    hintText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (name) =>
+                      name!.length == 0
+                      ? 'Name cannot be empty'
+                      : null,
+                ),
+
+                // email input
+                Gap(24),
                 TextFormField(
                   controller: email,
                   decoration: InputDecoration(
-                    hintText: 'example@gmail.com',
+                    hintText: 'Email',
                     border: OutlineInputBorder(),
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -59,6 +80,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           : null,
                 ),
                 Gap(24),
+
+                // password input
                 TextFormField(
                   controller: password,
                   decoration: InputDecoration(
@@ -72,6 +95,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           : null,
                 ),
                 Gap(24),
+
+                // confirm password email
                 TextFormField(
                   decoration: InputDecoration(
                     hintText: 'Confirm password',
@@ -83,9 +108,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       : null,
                 ),
                 Gap(32),
+
+                // sign up button
                 ElevatedButton(
                   onPressed: signUp,
-                  child: Text('SIGNIN'),
+                  child: Text('SIGNUP'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
@@ -94,6 +121,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
                 Gap(24),
+
+                // already have an account button
                 Align(
                   child: RichText(
                       text: TextSpan(
@@ -140,8 +169,11 @@ class _SignupScreenState extends State<SignupScreen> {
     );
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email.text, password: password.text);
+
+      final user = result.user!;
+      user.updateDisplayName(name.text);
     } on FirebaseAuthException catch (e) {
       print(e.toString());
     }
