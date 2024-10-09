@@ -4,6 +4,8 @@ import 'package:fire/upload_file.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/post_model.dart';
 
@@ -35,6 +37,17 @@ class HomeScreen extends StatelessWidget {
       await GallerySaver.saveImage(path, toDcim: true);
     }
   }
+
+  String getDate(Timestamp timeStamp){
+    final format = DateFormat('d MMMM y');
+    return format.format(timeStamp.toDate());
+  }
+
+  String getTime(Timestamp timeStamp){
+    final format = DateFormat('jm');
+    return format.format(timeStamp.toDate());
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +87,29 @@ class HomeScreen extends StatelessWidget {
                   margin: EdgeInsets.all(12),
                   child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom:  8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.grey[200],
+                              child: Icon(Icons.person),
+                            ),
+                            Gap(8),
+                            Text(posts[i].createdBy,style: TextStyle(fontSize: 20),),
+                            Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(getDate(posts[i].createdAt)),
+                                Text(getTime(posts[i].createdAt)),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
                       Stack(children: [
                         Image.network(posts[i].imageUrl),
                         Align(
