@@ -9,8 +9,22 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/post_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late String userId;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    userId = FirebaseAuth.instance.currentUser!.uid;
+  }
 
   Stream<List<Post>> readPosts() => FirebaseFirestore.instance
       .collection('posts')
@@ -38,16 +52,29 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  String getDate(Timestamp timeStamp){
+  String getDate(Timestamp timeStamp) {
     final format = DateFormat('d MMMM y');
     return format.format(timeStamp.toDate());
   }
 
-  String getTime(Timestamp timeStamp){
+  String getTime(Timestamp timeStamp) {
     final format = DateFormat('jm');
     return format.format(timeStamp.toDate());
   }
 
+  handlePostLikes(Post post) {
+    final isLiked = post.likes?[userId] ?? false;
+
+    if (isLiked) {
+      final postRef =
+          FirebaseFirestore.instance.collection('posts').doc(post.id);
+      postRef.update({'likes.$userId': false});
+    } else if (!isLiked) {
+      final postRef =
+          FirebaseFirestore.instance.collection('posts').doc(post.id);
+      postRef.update({'likes.$userId': true});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +84,9 @@ class HomeScreen extends StatelessWidget {
         title: Text('Posts Feed'),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: ()=>FirebaseAuth.instance.signOut(), icon: Icon(Icons.logout))
+          IconButton(
+              onPressed: () => FirebaseAuth.instance.signOut(),
+              icon: Icon(Icons.logout))
         ],
       ),
       body: StreamBuilder<List<Post>>(
@@ -86,9 +115,10 @@ class HomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(12),
                   margin: EdgeInsets.all(12),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom:  8.0),
+                        padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,7 +128,10 @@ class HomeScreen extends StatelessWidget {
                               child: Icon(Icons.person),
                             ),
                             Gap(8),
-                            Text(posts[i].createdBy,style: TextStyle(fontSize: 20),),
+                            Text(
+                              posts[i].createdBy,
+                              style: TextStyle(fontSize: 20),
+                            ),
                             Spacer(),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -134,6 +167,18 @@ class HomeScreen extends StatelessWidget {
                         posts[i].content,
                         style: TextStyle(fontSize: 32),
                       ),
+                      Gap(12),
+                      TextButton.icon(
+                          onPressed: () {
+                            handlePostLikes(posts[i]);
+                          },
+                          icon: Icon(
+                            posts[i].likes?[userId] ?? false
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            size: 28,
+                            color: Colors.red,
+                          ), label: Text('1 likes',style: TextStyle(fontSize: 16),),),
                     ],
                   ),
                 ),

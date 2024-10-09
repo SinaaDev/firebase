@@ -114,7 +114,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   Gap(12),
                   ElevatedButton.icon(
                     onPressed: signInWithGoogle,
-                    icon: Image.network('https://reputationup.com/wp-content/uploads/2021/07/google-web-reputation-2022-1-1024x1024.png',height: 64,width: 64,),
+                    icon: SizedBox(height: 64,width: 64, child: Image.network('https://reputationup.com/wp-content/uploads/2021/07/google-web-reputation-2022-1-1024x1024.png',height: 64,width: 64,)),
                     label: Text('Sign in with Google'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white70,

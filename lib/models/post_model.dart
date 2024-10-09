@@ -7,6 +7,7 @@ class Post {
   final Timestamp createdAt;
   final String imageUrl;
   final String content;
+  final dynamic likes;
 
   Post({
     required this.id,
@@ -15,6 +16,7 @@ class Post {
     required this.createdAt,
     required this.imageUrl,
     required this.content,
+    required this.likes,
   });
 
   Map<String, dynamic> toJson() =>
@@ -24,7 +26,8 @@ class Post {
         'createdBy': createdBy,
         'createdAt': createdAt,
         'imageUrl': imageUrl,
-        'content': content
+        'content': content,
+        'likes': likes
       };
 
   static Post fromJson(Map<String, dynamic> json) =>
@@ -35,5 +38,6 @@ class Post {
           createdAt: json['createdAt'],
           imageUrl: json['imageUrl'],
           content: json['content'],
+          likes: json['likes']
       );
 }

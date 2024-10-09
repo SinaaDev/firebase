@@ -251,6 +251,7 @@ class _UploadFileState extends State<UploadFile> {
       createdAt: Timestamp.now(),
       imageUrl: imageUrl,
       content: bodyTextController.text,
+      likes: null
     );
     final postJson = post.toJson();
 
