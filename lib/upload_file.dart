@@ -171,7 +171,7 @@ class _UploadFileState extends State<UploadFile> {
         width: 250,
         height: 250,
         color: Colors.grey[200],
-        child:imageUrl != ''?  IconButton(onPressed: (){
+        child:imageUrl == ''?  IconButton(onPressed: (){
           showDialog(context: context, builder: (context) => AlertDialog(
             title: Text('From where do you want to take photo from'),
             actions: [
@@ -251,7 +251,7 @@ class _UploadFileState extends State<UploadFile> {
       createdAt: Timestamp.now(),
       imageUrl: imageUrl,
       content: bodyTextController.text,
-      likes: null
+      likes: widget.isEditMode ? widget.post!.likes : null
     );
     final postJson = post.toJson();
 

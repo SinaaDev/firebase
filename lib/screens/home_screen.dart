@@ -76,6 +76,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  int getLikeCount(dynamic likes){
+    if(likes == null){
+      return 0;
+    }
+    int count = 0;
+    likes.values.forEach((val){
+      if(val == true){
+        count += 1;
+      }
+    });
+    return count;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,7 +191,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : Icons.favorite_border,
                             size: 28,
                             color: Colors.red,
-                          ), label: Text('1 likes',style: TextStyle(fontSize: 16),),),
+                          ),
+                        label:
+                            getLikeCount(posts[i].likes) == 1?
+                        Text('1 like',style: TextStyle(fontSize: 16),):
+                        Text('${getLikeCount(posts[i].likes).toString()} likes',style: TextStyle(fontSize: 16),)
+                      ),
                     ],
                   ),
                 ),
