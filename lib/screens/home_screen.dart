@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:fire/main.dart';
 import 'package:fire/upload_file.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -26,6 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     userId = FirebaseAuth.instance.currentUser!.uid;
+
+    FirebaseMessaging.onMessage.listen(_firebaseMessagingForegroundHandler);
+
   }
 
   Future<void> _firebaseMessagingForegroundHandler(message) async {
@@ -41,6 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
             channel.id,
             channel.name,
             channelDescription: channel.description,
+            color: Colors.blue,
+            playSound: true,
+            icon: '@mipmap/ic_launcher',
           ),
         ),
       );

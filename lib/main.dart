@@ -45,7 +45,7 @@ void main() async {
 await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
   alert: true,
   badge: true,
-  sound: true
+  sound: true,
 )
 
   
