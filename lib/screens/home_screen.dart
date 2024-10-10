@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:fire/main.dart';
 import 'package:fire/upload_file.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +26,25 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     userId = FirebaseAuth.instance.currentUser!.uid;
+  }
+
+  Future<void> _firebaseMessagingForegroundHandler(message) async {
+    final notification = message.notification;
+    final android = message.notification?.android;
+    if (notification != null && android != null) {
+      flutterLocalNotificationsPanel.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description,
+          ),
+        ),
+      );
+    }
   }
 
   Stream<List<Post>> readPosts() => FirebaseFirestore.instance
@@ -76,13 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  int getLikeCount(dynamic likes){
-    if(likes == null){
+  int getLikeCount(dynamic likes) {
+    if (likes == null) {
       return 0;
     }
     int count = 0;
-    likes.values.forEach((val){
-      if(val == true){
+    likes.values.forEach((val) {
+      if (val == true) {
         count += 1;
       }
     });
@@ -192,11 +213,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             size: 28,
                             color: Colors.red,
                           ),
-                        label:
-                            getLikeCount(posts[i].likes) == 1?
-                        Text('1 like',style: TextStyle(fontSize: 16),):
-                        Text('${getLikeCount(posts[i].likes).toString()} likes',style: TextStyle(fontSize: 16),)
-                      ),
+                          label: getLikeCount(posts[i].likes) == 1
+                              ? Text(
+                                  '1 like',
+                                  style: TextStyle(fontSize: 16),
+                                )
+                              : Text(
+                                  '${getLikeCount(posts[i].likes).toString()} likes',
+                                  style: TextStyle(fontSize: 16),
+                                )),
                     ],
                   ),
                 ),
